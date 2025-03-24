@@ -16,7 +16,7 @@ const config = {
         // נתיב לשמירת קבצי אימות
         authPath: process.env.AUTH_PATH || './auth_info_baileys',
         // נתיב לשמירת היסטוריית הודעות
-        storePath: process.env.STORE_PATH || './baileys_store.json',
+        // storePath: process.env.STORE_PATH || './baileys_store.json',
         // זמן בדיקת חיבור (במילישניות)
         connectionCheckInterval: parseInt(process.env.CONNECTION_CHECK_INTERVAL || '10000'),
     }

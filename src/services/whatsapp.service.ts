@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 import { Boom } from '@hapi/boom';
-import { makeWASocket, useMultiFileAuthState } from '@whiskeysockets/baileys';
+import { makeWASocket, useMultiFileAuthState, makeInMemoryStore } from '@whiskeysockets/baileys';
 import type { WASocket } from '@whiskeysockets/baileys';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ import config from '../config/config.js';
 class WhatsAppService {
     private static instance: WhatsAppService;
     private _socket: WASocket | null = null;
+    private _store: ReturnType<typeof makeInMemoryStore> = makeInMemoryStore({});
     private _phoneNumber: string | null = null;
     private _connectionStatus: 'disconnected' | 'connecting' | 'connected' | 'busy' =
         'disconnected';
@@ -80,7 +81,7 @@ class WhatsAppService {
             });
 
             this._socket.ev.on('creds.update', saveCreds);
-
+            this._store.bind(this._socket.ev);
             return new Promise((resolve, reject) => {
                 let pairingCodeRequested = false;
                 this._socket?.ev.on('connection.update', async (update: any) => {
@@ -186,13 +187,16 @@ class WhatsAppService {
     public get status(): string {
         return this._connectionStatus;
     }
-
     public get phoneNumber(): string | null {
         return this._phoneNumber;
     }
 
     public get socket(): WASocket | null {
         return this._socket;
+    }
+    // להוסיף ל-WhatsAppService
+    public get store(): ReturnType<typeof makeInMemoryStore> {
+        return this._store;
     }
 
     // Setter for the busy state

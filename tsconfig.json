@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "es2023",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
@@ -11,10 +11,19 @@
     "declaration": true,
     "sourceMap": true,
     "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "verbatimModuleSyntax": true,
     "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": [
     "src/**/*.ts",
+    "tests/**/*.ts",
     "types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

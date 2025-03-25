@@ -1,22 +1,18 @@
-import { Boom } from '@hapi/boom';
-import {
-    makeWASocket,
-    useMultiFileAuthState,
-    WASocket,
-} from '@whiskeysockets/baileys';
 import fs from 'fs';
-import config from '../config/config.js';
+
+import { Boom } from '@hapi/boom';
+import { makeWASocket, useMultiFileAuthState } from '@whiskeysockets/baileys';
+import type { WASocket } from '@whiskeysockets/baileys';
 import axios from 'axios';
+
+import config from '../config/config.js';
 
 class WhatsAppService {
     private static instance: WhatsAppService;
     private _socket: WASocket | null = null;
     private _phoneNumber: string | null = null;
-    private _connectionStatus:
-        | 'disconnected'
-        | 'connecting'
-        | 'connected'
-        | 'busy' = 'disconnected';
+    private _connectionStatus: 'disconnected' | 'connecting' | 'connected' | 'busy' =
+        'disconnected';
 
     // להגבלת מספר ניסיונות להתחבר מחדש
     private maxReconnectAttempts: number = 3;
@@ -70,17 +66,13 @@ class WhatsAppService {
         }
     }
 
-    public async connectToWhatsApp(
-        phoneNumber?: string
-    ): Promise<string | null> {
+    public async connectToWhatsApp(phoneNumber?: string): Promise<string | null> {
         this._connectionStatus = 'connecting';
         this._phoneNumber = phoneNumber || this._phoneNumber;
-        let pairingCode: string | null
+        let pairingCode: string | null;
 
         try {
-            const { state, saveCreds } = await useMultiFileAuthState(
-                config.whatsapp.authPath
-            );
+            const { state, saveCreds } = await useMultiFileAuthState(config.whatsapp.authPath);
 
             this._socket = makeWASocket({
                 auth: state,
@@ -91,7 +83,7 @@ class WhatsAppService {
 
             return new Promise((resolve, reject) => {
                 let pairingCodeRequested = false;
-                this._socket?.ev.on('connection.update',async (update: any) => {
+                this._socket?.ev.on('connection.update', async (update: any) => {
                     const { connection, lastDisconnect, qr } = update;
                     console.log(`סטטוס חיבור: ${connection}`);
                     if (
@@ -102,21 +94,21 @@ class WhatsAppService {
                     ) {
                         pairingCodeRequested = true;
                         try {
-                            pairingCode = await this._socket?.requestPairingCode(this._phoneNumber) as string;
+                            pairingCode = (await this._socket?.requestPairingCode(
+                                this._phoneNumber,
+                            )) as string;
                             console.log(`קוד צימוד: ${pairingCode}`);
-                                resolve(pairingCode);
+                            resolve(pairingCode);
                         } catch (err) {
-                           await this.clearSession()
-                            console.error( err);
+                            await this.clearSession();
+                            console.error(err);
                             reject(err);
                         }
                     }
 
                     if (connection === 'close') {
                         const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
-                        console.log(
-                          `  החיבור נסגר (סיבה ${statusCode}). ניסיון התחברות מחדש...`
-                    );
+                        console.log(`  החיבור נסגר (סיבה ${statusCode}). ניסיון התחברות מחדש...`);
                         this._connectionStatus = 'disconnected';
                         this._socket = null;
 
@@ -127,14 +119,13 @@ class WhatsAppService {
                         ) {
                             this.reconnectAttempt++;
                             try {
-                                await this.closeSocket()
-                                 await this.connectToWhatsApp();
+                                await this.closeSocket();
+                                await this.connectToWhatsApp();
                                 resolve(null);
                             } catch (error) {
                                 reject(error);
                             }
                         } else {
-
                             // במקרים אחרים, מנקה את הסשן ומדווח על כשל
                             await this.clearSession();
                             reject(new Error(`החיבור נכשל (סיבה ${statusCode})`));
@@ -146,8 +137,6 @@ class WhatsAppService {
                         resolve(pairingCode);
                     }
                 });
-
-
             });
         } catch (error) {
             await this.clearSession();
@@ -161,7 +150,7 @@ class WhatsAppService {
             if (fs.existsSync(config.whatsapp.authPath)) {
                 fs.rmSync(config.whatsapp.authPath, { recursive: true, force: true });
             }
-            await this.closeSocket()
+            await this.closeSocket();
             this._phoneNumber = null;
             this._socket = null;
             this._connectionStatus = 'disconnected';
@@ -179,9 +168,7 @@ class WhatsAppService {
                 phoneNumber: this._phoneNumber,
                 timestamp: new Date().toISOString(),
             });
-            console.log(
-                `עדכון נשלח לשרת הראשי: ${isConnected ? 'מחובר' : 'מנותק'}`
-        );
+            console.log(`עדכון נשלח לשרת הראשי: ${isConnected ? 'מחובר' : 'מנותק'}`);
         } catch (error) {
             console.error('שגיאה בשליחת עדכון לשרת הראשי:', error);
         }

@@ -8,7 +8,8 @@ const config = {
     // הגדרות שרת
     server: {
         port: process.env.PORT || 3000,
-        mainServerCallback: process.env.MAIN_SERVER_CALLBACK || 'http://localhost:8080/whatsapp/status',
+        mainServerCallback:
+            process.env.MAIN_SERVER_CALLBACK || 'http://localhost:8080/whatsapp/status',
     },
 
     // הגדרות WhatsApp
@@ -19,7 +20,7 @@ const config = {
         // storePath: process.env.STORE_PATH || './baileys_store.json',
         // זמן בדיקת חיבור (במילישניות)
         connectionCheckInterval: parseInt(process.env.CONNECTION_CHECK_INTERVAL || '10000'),
-    }
+    },
 };
 
 export default config;

@@ -1,4 +1,5 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+
 import whatsappService from '../services/whatsapp.service.js';
 
 // בקר לניהול בקשות WhatsApp
@@ -11,7 +12,10 @@ export const whatsappController = {
             const { phoneNumber } = req.body;
 
             if (!phoneNumber) {
-                res.status(400).json({ success: false, message: 'נדרש מספר טלפון בפורמט בינלאומי (ללא +)' });
+                res.status(400).json({
+                    success: false,
+                    message: 'נדרש מספר טלפון בפורמט בינלאומי (ללא +)',
+                });
                 return;
             }
 
@@ -20,7 +24,7 @@ export const whatsappController = {
                 res.status(409).json({
                     success: false,
                     message: 'יש כבר חיבור פעיל ל-WhatsApp',
-                    currentPhone: whatsappService.phoneNumber
+                    currentPhone: whatsappService.phoneNumber,
                 });
                 return;
             }
@@ -32,14 +36,14 @@ export const whatsappController = {
                 success: true,
                 message: 'התהליך התחיל, נא להזין את הקוד באפליקציית WhatsApp',
                 pairingCode,
-                phoneNumber
+                phoneNumber,
             });
-
         } catch (error) {
             console.error('שגיאה ביצירת חיבור:', error);
             res.status(500).json({
                 success: false,
-                message: error instanceof Error ? error.message : 'שגיאה לא צפויה בהתחברות ל-WhatsApp'
+                message:
+                    error instanceof Error ? error.message : 'שגיאה לא צפויה בהתחברות ל-WhatsApp',
             });
         }
     },
@@ -53,7 +57,7 @@ export const whatsappController = {
                 connected: whatsappService.isConnected,
                 status: whatsappService.status,
                 busy: whatsappService.isBusy,
-                phoneNumber: whatsappService.phoneNumber
+                phoneNumber: whatsappService.phoneNumber,
             });
         } catch (error) {
             console.error('שגיאה בבדיקת סטטוס:', error);
@@ -80,5 +84,5 @@ export const whatsappController = {
             console.error('שגיאה בניתוק:', error);
             res.status(500).json({ success: false, message: 'שגיאה בניתוק החיבור' });
         }
-    }
+    },
 };

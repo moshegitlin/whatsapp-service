@@ -85,4 +85,5 @@ export const whatsappController = {
             res.status(500).json({ success: false, message: 'שגיאה בניתוק החיבור' });
         }
     },
+
 };

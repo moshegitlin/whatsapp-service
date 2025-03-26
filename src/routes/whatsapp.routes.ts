@@ -16,5 +16,7 @@ router.post('/disconnect', whatsappController.disconnect);
 
 // נתיבים לטיפול בקבוצות
 router.get('/groups', whatsappGroupsController.getAllGroups);
+router.post('/messages/send-to-groups', whatsappGroupsController.sendMessageToGroups);
+router.post('/messages/clear-groups', whatsappGroupsController.clearGroupMessages);
 
 export default router;

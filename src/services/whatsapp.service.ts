@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import { Boom } from '@hapi/boom';
 import { makeWASocket, useMultiFileAuthState } from '@whiskeysockets/baileys';
 import type { WASocket } from '@whiskeysockets/baileys';

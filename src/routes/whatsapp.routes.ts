@@ -16,8 +16,5 @@ router.post('/disconnect', whatsappController.disconnect);
 
 // נתיבים לטיפול בקבוצות
 router.get('/groups', whatsappGroupsController.getAllGroups);
-router.get('/groups/archived', whatsappGroupsController.getArchivedGroups);
-router.post('/groups/archive', whatsappGroupsController.updateArchiveStatus);
-router.post('/groups/archive/bulk', whatsappGroupsController.updateMultipleArchiveStatus);
 
 export default router;
